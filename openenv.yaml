@@ -1,0 +1,166 @@
+# openenv.yaml
+# OpenEnv-compliant specification for the AI Customer Support Training Environment
+# See: https://openenv.dev
+
+name: ai-customer-support-env
+version: "1.0.0"
+description: >
+  A reinforcement-learning environment that trains AI agents to handle
+  real-world customer support scenarios. Three difficulty levels are provided:
+  issue classification (easy), response generation (medium), and full
+  multi-turn issue resolution (hard).
+
+openenv_version: "1.0"
+
+# ──────────────────────────────────────────────
+# Endpoints
+# ──────────────────────────────────────────────
+endpoints:
+  reset: /reset
+  step:  /step
+  state: /state
+  health: /health
+  info:  /info
+
+# ──────────────────────────────────────────────
+# Tasks
+# ──────────────────────────────────────────────
+tasks:
+  - id: classify
+    name: "Issue Classification"
+    difficulty: easy
+    task_type: easy
+    max_steps: 1
+    score_range: [0.0, 1.0]
+    description: >
+      The agent receives a single customer query and must classify it into
+      one of five categories: billing, shipping, refund, technical, or general.
+      Correct classification earns a score of 1.0; incorrect earns 0.0.
+    action_required: classify
+    grader: rule_based
+
+  - id: respond
+    name: "Response Generation"
+    difficulty: medium
+    task_type: medium
+    max_steps: 1
+    score_range: [0.0, 1.0]
+    description: >
+      The agent receives a customer complaint and must write a relevant,
+      empathetic, and actionable response. Scored on four rubric dimensions:
+      relevance (0.4), politeness (0.3), length (0.2), and actionability (0.1).
+    action_required: respond
+    grader: rule_based_rubric
+
+  - id: resolve
+    name: "Full Issue Resolution"
+    difficulty: hard
+    task_type: hard
+    max_steps: 5
+    score_range: [0.0, 1.0]
+    description: >
+      Multi-turn resolution task. The agent must (1) identify the issue,
+      (2) ask for clarifying information, and (3) provide a concrete solution.
+      Partial rewards are given at each milestone. A completion bonus of 0.30
+      is awarded when all three milestones are achieved within max_steps.
+    grader: milestone_based
+
+# ──────────────────────────────────────────────
+# Action space
+# ──────────────────────────────────────────────
+action_space:
+  type: object
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      enum: [classify, respond, ask_question]
+      description: "Type of action the agent is taking."
+    category:
+      type: string
+      enum: [billing, shipping, refund, technical, general]
+      description: "Issue category. Required when type=classify."
+    message:
+      type: string
+      description: "Response or clarification text. Required when type=respond or ask_question."
+
+# ──────────────────────────────────────────────
+# Observation space
+# ──────────────────────────────────────────────
+observation_space:
+  type: object
+  properties:
+    current_query:
+      type: string
+      description: "The latest customer message."
+    chat_history:
+      type: array
+      items:
+        type: object
+        properties:
+          role:
+            type: string
+            enum: [customer, agent]
+          content:
+            type: string
+      description: "Conversation history up to this point."
+    task_type:
+      type: string
+      enum: [easy, medium, hard]
+      description: "Difficulty of the current episode."
+    step_count:
+      type: integer
+      description: "Number of steps taken so far."
+    max_steps:
+      type: integer
+      description: "Maximum allowed steps for this task."
+    task_hint:
+      type: string
+      description: "Optional coaching hint about what the agent should do."
+
+# ──────────────────────────────────────────────
+# Reward structure
+# ──────────────────────────────────────────────
+reward:
+  range: [0.0, 1.0]
+  description: "All rewards are normalised to [0.0, 1.0]."
+  breakdown:
+    classify:
+      correct_category: 1.0
+      wrong_category: 0.0
+    respond:
+      relevance: 0.40
+      politeness: 0.30
+      length: 0.20
+      actionable: 0.10
+    resolve:
+      issue_identified: 0.20
+      clarification_asked: 0.20
+      solution_given: 0.30
+      completion_bonus: 0.30
+      politeness_bonus: 0.05
+
+# ──────────────────────────────────────────────
+# Runtime constraints
+# ──────────────────────────────────────────────
+runtime:
+  max_inference_minutes: 20
+  min_vcpu: 2
+  min_memory_gb: 8
+
+# ──────────────────────────────────────────────
+# Environment variables
+# ──────────────────────────────────────────────
+environment_variables:
+  API_BASE_URL:
+    description: "LLM API endpoint (OpenAI-compatible)."
+    required: true
+    example: "https://api.openai.com/v1"
+  MODEL_NAME:
+    description: "Model identifier to use for inference."
+    required: true
+    example: "gpt-4o-mini"
+  HF_TOKEN:
+    description: "Hugging Face / API key for authentication."
+    required: true
