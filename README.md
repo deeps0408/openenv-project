@@ -403,3 +403,5 @@ Produced by `inference.py` with `MODEL_NAME=gpt-4o-mini`:
 ## 📄 License
 
 MIT License — see `LICENSE` for details.
+# openenv-project
+A Dockerized environment for training AI agents in realistic customer support scenarios, using Docker and focused on task resolution.
