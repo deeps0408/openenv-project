@@ -1,4 +1,4 @@
-# 🎯 AI Customer Support Training Environment
+#  AI Customer Support Training Environment
 
 > An **OpenEnv-compliant reinforcement-learning environment** that trains AI agents to resolve real-world customer support issues — from issue classification to full multi-turn resolution.
 
@@ -9,7 +9,7 @@
 
 ---
 
-## 📌 What Problem Does This Solve?
+##  What Problem Does This Solve?
 
 Companies like Amazon, Flipkart, and Shopify rely on AI agents to handle thousands of customer interactions daily. Training such agents requires a controlled, replayable environment that:
 
@@ -22,7 +22,7 @@ This project provides exactly that — a gym-style environment your agent can le
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 ai-customer-support-env/
@@ -40,7 +40,7 @@ ai-customer-support-env/
 
 ---
 
-## ⚙️ Environment Overview
+##  Environment Overview
 
 ### Full Lifecycle (one episode)
 
@@ -70,7 +70,7 @@ while not done:
 
 ---
 
-## 🧩 Tasks
+##  Tasks
 
 ### Task 1 — Issue Classification `(easy)`
 
@@ -183,7 +183,7 @@ Total episode score: 1.0 🎉
 
 ---
 
-## 📐 Action Space
+##  Action Space
 
 ```yaml
 type: object
@@ -202,7 +202,7 @@ properties:
 
 ---
 
-## 👁️ Observation Space
+##  Observation Space
 
 ```yaml
 type: object
@@ -217,7 +217,7 @@ properties:
 
 ---
 
-## 🏆 Reward Design
+##  Reward Design
 
 All rewards are normalised to `[0.0, 1.0]`. The reward function is designed to provide **partial progress signals** at every step, not just at termination.
 
@@ -231,7 +231,7 @@ This design prevents reward hacking (skipping steps) while still encouraging the
 
 ---
 
-## 🚀 Setup & Usage
+##  Setup & Usage
 
 ### Option 1 — Local Python
 
@@ -276,7 +276,7 @@ docker compose up
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 All endpoints are documented interactively at `http://localhost:7860/docs`.
 
@@ -330,7 +330,7 @@ All endpoints are documented interactively at `http://localhost:7860/docs`.
 
 ---
 
-## 📊 Baseline Scores
+##  Baseline Scores
 
 Produced by `inference.py` with `MODEL_NAME=gpt-4o-mini`:
 
@@ -344,7 +344,7 @@ Produced by `inference.py` with `MODEL_NAME=gpt-4o-mini`:
 
 ---
 
-## 📋 Structured Log Format
+##  Structured Log Format
 
 `inference.py` emits logs to stdout in this exact format (required by the evaluator):
 
@@ -362,7 +362,7 @@ Produced by `inference.py` with `MODEL_NAME=gpt-4o-mini`:
 
 ---
 
-## 🌍 Environment Variables
+##  Environment Variables
 
 | Variable      | Required | Description |
 |---------------|----------|-------------|
@@ -374,7 +374,7 @@ Produced by `inference.py` with `MODEL_NAME=gpt-4o-mini`:
 
 ---
 
-## 🐳 Hugging Face Spaces Deployment
+##  Hugging Face Spaces Deployment
 
 1. Create a new **Space** with Docker runtime.
 2. Tag it with `openenv`.
@@ -382,25 +382,9 @@ Produced by `inference.py` with `MODEL_NAME=gpt-4o-mini`:
 4. Set Secrets: `API_BASE_URL`, `MODEL_NAME`, `HF_TOKEN`.
 5. The Space will auto-build and expose port 7860.
 
----
 
-## 📝 Pre-Submission Checklist
 
-- [x] Hugging Face Space deployment with `openenv` tag
-- [x] `/health` returns HTTP 200
-- [x] `/reset` starts a valid episode
-- [x] `openenv.yaml` present and valid
-- [x] Typed Pydantic models for all actions and observations
-- [x] `step()` / `reset()` / `state()` endpoints implemented
-- [x] Dockerfile builds cleanly with `docker build .`
-- [x] `inference.py` runs without errors
-- [x] 3 tasks implemented with graders scoring 0.0–1.0
-- [x] Structured `[START]` / `[STEP]` / `[END]` logs emitted
-- [x] Runtime < 20 minutes on vcpu=2, memory=8GB
-
----
-
-## 📄 License
+##  License
 
 MIT License — see `LICENSE` for details.
 # openenv-project
